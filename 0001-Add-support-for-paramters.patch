@@ -1,0 +1,66 @@
+From 974293af8ceb191a6e14438292c06ef62034df59 Mon Sep 17 00:00:00 2001
+From: Hans Christian Lonstad <hcl@datarespons.no>
+Date: Thu, 19 Oct 2023 09:01:58 +0200
+Subject: [PATCH] Add support for paramters
+
+---
+ plat/imx/imx8m/imx8mp/imx8mp_bl31_setup.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
+
+diff --git a/plat/imx/imx8m/imx8mp/imx8mp_bl31_setup.c b/plat/imx/imx8m/imx8mp/imx8mp_bl31_setup.c
+index ac39f5f79..b5818444e 100644
+--- a/plat/imx/imx8m/imx8mp/imx8mp_bl31_setup.c
++++ b/plat/imx/imx8m/imx8mp/imx8mp_bl31_setup.c
+@@ -218,6 +218,7 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
+ 		mmio_write_32(IMX_CSU_BASE + i * 4, 0x00ff00ff);
+ 	}
+ 
++
+ 	imx_aipstz_init(aipstz);
+ 
+ 	imx_rdc_init(rdc);
+@@ -248,21 +249,22 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
+ 	/* Populate entry point information for BL32 */
+ 	SET_PARAM_HEAD(&bl32_image_ep_info, PARAM_EP, VERSION_1, 0);
+ 	SET_SECURITY_STATE(bl32_image_ep_info.h.attr, SECURE);
+-	bl32_image_ep_info.pc = BL32_BASE;
++	bl32_image_ep_info.pc = arg0 ? arg0 : BL32_BASE;
+ 	bl32_image_ep_info.spsr = 0;
+ 
+ 	/* Pass TEE base and size to bl33 */
+-	bl33_image_ep_info.args.arg1 = BL32_BASE;
++	bl33_image_ep_info.args.arg1 = arg0 ? arg0 : BL32_BASE;
+ 	bl33_image_ep_info.args.arg2 = BL32_SIZE;
+ 
+ #ifdef SPD_trusty
+ 	bl32_image_ep_info.args.arg0 = BL32_SIZE;
+ 	bl32_image_ep_info.args.arg1 = BL32_BASE;
+ #else
++	
++	bl33_image_ep_info.args.arg3 = arg2 ? arg2 : BL32_FDT_OVERLAY_ADDR;
++	bl32_image_ep_info.args.arg3 = arg2 ? arg2 : BL32_FDT_OVERLAY_ADDR;
+ 	/* Make sure memory is clean */
+-	mmio_write_32(BL32_FDT_OVERLAY_ADDR, 0);
+-	bl33_image_ep_info.args.arg3 = BL32_FDT_OVERLAY_ADDR;
+-	bl32_image_ep_info.args.arg3 = BL32_FDT_OVERLAY_ADDR;
++	mmio_write_32(bl33_image_ep_info.args.arg3, 0);
+ #endif
+ #endif
+ 
+@@ -337,11 +339,13 @@ void bl31_platform_setup(void)
+ 
+ entry_point_info_t *bl31_plat_get_next_image_ep_info(unsigned int type)
+ {
++	INFO("%s: want image %d\n", __func__, type);
+ 	if (type == NON_SECURE) {
+ 		return &bl33_image_ep_info;
+ 	}
+ 
+ 	if (type == SECURE) {
++		INFO("%s: bl32 PC is 0x%08lx\n", __func__, bl32_image_ep_info.pc);
+ 		return &bl32_image_ep_info;
+ 	}
+ 
+-- 
+2.34.1
+

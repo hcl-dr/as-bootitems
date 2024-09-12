@@ -1,0 +1,11 @@
+[update]
+compatible=dr-imx8mp
+version=@VERSION@
+description=Boot loader
+build=@BUILD@
+
+[bundle]
+format=plain
+
+[image.bootloader.as,as-imx93evk]
+filename=barebox-as93evk.img

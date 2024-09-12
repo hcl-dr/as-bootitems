@@ -1,0 +1,9 @@
+[submodule "imx-atf"]
+	path = imx-atf
+	url = https://github.com/nxp-imx/imx-atf.git
+[submodule "barebox"]
+	path = barebox
+	url = git@github.com:hcl-dr/barebox-as.git
+[submodule "imx-optee-os"]
+	path = imx-optee-os
+	url = https://github.com/nxp-imx/imx-optee-os.git

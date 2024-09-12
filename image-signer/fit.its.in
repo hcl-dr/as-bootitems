@@ -1,0 +1,373 @@
+/dts-v1/;
+
+/ {
+        description = "Kernel fitImage for Poky (Yocto Project Reference Distro)/5.15.129+gitAUTOINC+3a95b56549/dr-imx8mp";
+        #address-cells = <1>;
+
+        images {
+                kernel-1 {
+                        description = "Linux kernel";
+                        data = /incbin/("@IMAGE_DIR@/Image");
+                        type = "kernel";
+                        arch = "arm64";
+                        os = "linux";
+                        compression = "none";
+                        load = <0x40480000>;
+                        entry = <0x40480000>;
+                        hash-1 {
+                                algo = "sha256";
+                        };
+                };
+                fdt-freescale_dr-imx8mp-evk.dtb {
+                        description = "Flattened Device Tree blob";
+                        data = /incbin/("@IMAGE_DIR@/dr-imx8mp-evk.dtb");
+                        type = "flat_dt";
+                        arch = "arm64";
+                        compression = "none";
+                        
+                        hash-1 {
+                                algo = "sha256";
+                        };
+                };
+                fdt-freescale_dr-imx8mp-evk-sdio-wifi.dtb {
+                        description = "Flattened Device Tree blob";
+                        data = /incbin/("@IMAGE_DIR@/dr-imx8mp-evk-sdio-wifi.dtb");
+                        type = "flat_dt";
+                        arch = "arm64";
+                        compression = "none";
+                        
+                        hash-1 {
+                                algo = "sha256";
+                        };
+                };
+                fdt-freescale_dr-imx8mp-evk-pcie-wifi.dtb {
+                        description = "Flattened Device Tree blob";
+                        data = /incbin/("@IMAGE_DIR@/dr-imx8mp-evk-pcie-wifi.dtb");
+                        type = "flat_dt";
+                        arch = "arm64";
+                        compression = "none";
+                        
+                        hash-1 {
+                                algo = "sha256";
+                        };
+                };
+                fdt-freescale_dr-simpad2p.dtb {
+                        description = "Flattened Device Tree blob";
+                        data = /incbin/("@IMAGE_DIR@/dr-simpad2p.dtb");
+                        type = "flat_dt";
+                        arch = "arm64";
+                        compression = "none";
+                        
+                        hash-1 {
+                                algo = "sha256";
+                        };
+                };
+                fdt-freescale_dr-simpad2p-revB.dtb {
+                        description = "Flattened Device Tree blob";
+                        data = /incbin/("@IMAGE_DIR@/dr-simpad2p-revB.dtb");
+                        type = "flat_dt";
+                        arch = "arm64";
+                        compression = "none";
+                        
+                        hash-1 {
+                                algo = "sha256";
+                        };
+                };
+                fdt-freescale_dr-linkbox2p.dtb {
+                        description = "Flattened Device Tree blob";
+                        data = /incbin/("@IMAGE_DIR@/dr-linkbox2p.dtb");
+                        type = "flat_dt";
+                        arch = "arm64";
+                        compression = "none";
+                        
+                        hash-1 {
+                                algo = "sha256";
+                        };
+                };
+                fdt-freescale_dr-linkbox2p-revB.dtb {
+                        description = "Flattened Device Tree blob";
+                        data = /incbin/("@IMAGE_DIR@/dr-linkbox2p-revB.dtb");
+                        type = "flat_dt";
+                        arch = "arm64";
+                        compression = "none";
+                        
+                        hash-1 {
+                                algo = "sha256";
+                        };
+                };
+                fdt-freescale_dr-cpum2.dtb {
+                        description = "Flattened Device Tree blob";
+                        data = /incbin/("@IMAGE_DIR@/dr-cpum2.dtb");
+                        type = "flat_dt";
+                        arch = "arm64";
+                        compression = "none";
+                        
+                        hash-1 {
+                                algo = "sha256";
+                        };
+                };
+                fdt-freescale_dr-cpum2-revB.dtb {
+                        description = "Flattened Device Tree blob";
+                        data = /incbin/("@IMAGE_DIR@/dr-cpum2-revB.dtb");
+                        type = "flat_dt";
+                        arch = "arm64";
+                        compression = "none";
+                        
+                        hash-1 {
+                                algo = "sha256";
+                        };
+                };
+                fdt-freescale_dr-cpum2I-revB.dtb {
+                        description = "Flattened Device Tree blob";
+                        data = /incbin/("@IMAGE_DIR@/dr-cpum2I-revB.dtb");
+                        type = "flat_dt";
+                        arch = "arm64";
+                        compression = "none";
+                        
+                        hash-1 {
+                                algo = "sha256";
+                        };
+                };
+                fdt-freescale_dr-simpad2p-revC.dtb {
+                        description = "Flattened Device Tree blob";
+                        data = /incbin/("@IMAGE_DIR@/dr-simpad2p-revC.dtb");
+                        type = "flat_dt";
+                        arch = "arm64";
+                        compression = "none";
+                        
+                        hash-1 {
+                                algo = "sha256";
+                        };
+                };
+                fdt-freescale_dr-linkbox2p-revC.dtb {
+                        description = "Flattened Device Tree blob";
+                        data = /incbin/("@IMAGE_DIR@/dr-linkbox2p-revC.dtb");
+                        type = "flat_dt";
+                        arch = "arm64";
+                        compression = "none";
+                        
+                        hash-1 {
+                                algo = "sha256";
+                        };
+                };
+	};
+
+        configurations {
+                default = "conf-freescale_dr-imx8mp-evk.dtb";
+                conf-freescale_dr-imx8mp-evk.dtb {
+                        description = "1 Linux kernel, FDT blob";
+                        kernel = "kernel-1";
+                        fdt = "fdt-freescale_dr-imx8mp-evk.dtb";
+                        
+                        
+                        
+                        hash-1 {
+                                algo = "sha256";
+                        };
+                        signature-1 {
+                                algo = "sha256,@ALGO@";
+                                key-name-hint = "@KEY@";
+                                padding = "pkcs-1.5";
+                                sign-images = "kernel", "fdt";
+                        };
+                };
+                
+                conf-freescale_dr-imx8mp-evk-sdio-wifi.dtb {
+                        description = "0 Linux kernel, FDT blob";
+                        kernel = "kernel-1";
+                        fdt = "fdt-freescale_dr-imx8mp-evk-sdio-wifi.dtb";
+                        
+                        
+                        
+                        hash-1 {
+                                algo = "sha256";
+                        };
+                        signature-1 {
+                                algo = "sha256,@ALGO@";
+                                key-name-hint = "@KEY@";
+                                padding = "pkcs-1.5";
+                                sign-images = "kernel", "fdt";
+                        };
+                };
+                
+                conf-freescale_dr-imx8mp-evk-pcie-wifi.dtb {
+                        description = "0 Linux kernel, FDT blob";
+                        kernel = "kernel-1";
+                        fdt = "fdt-freescale_dr-imx8mp-evk-pcie-wifi.dtb";
+                        
+                        
+                        
+                        hash-1 {
+                                algo = "sha256";
+                        };
+                        signature-1 {
+                                algo = "sha256,@ALGO@";
+                                key-name-hint = "@KEY@";
+                                padding = "pkcs-1.5";
+                                sign-images = "kernel", "fdt";
+                        };
+                };
+                
+                conf-freescale_dr-simpad2p.dtb {
+                        description = "0 Linux kernel, FDT blob";
+                        kernel = "kernel-1";
+                        fdt = "fdt-freescale_dr-simpad2p.dtb";
+                        
+                        
+                        
+                        hash-1 {
+                                algo = "sha256";
+                        };
+                        signature-1 {
+                                algo = "sha256,@ALGO@";
+                                key-name-hint = "@KEY@";
+                                padding = "pkcs-1.5";
+                                sign-images = "kernel", "fdt";
+                        };
+                };
+                
+                conf-freescale_dr-simpad2p-revB.dtb {
+                        description = "0 Linux kernel, FDT blob";
+                        kernel = "kernel-1";
+                        fdt = "fdt-freescale_dr-simpad2p-revB.dtb";
+                        
+                        
+                        
+                        hash-1 {
+                                algo = "sha256";
+                        };
+                        signature-1 {
+                                algo = "sha256,@ALGO@";
+                                key-name-hint = "@KEY@";
+                                padding = "pkcs-1.5";
+                                sign-images = "kernel", "fdt";
+                        };
+                };
+                
+                conf-freescale_dr-linkbox2p.dtb {
+                        description = "0 Linux kernel, FDT blob";
+                        kernel = "kernel-1";
+                        fdt = "fdt-freescale_dr-linkbox2p.dtb";
+                        
+                        
+                        
+                        hash-1 {
+                                algo = "sha256";
+                        };
+                        signature-1 {
+                                algo = "sha256,@ALGO@";
+                                key-name-hint = "@KEY@";
+                                padding = "pkcs-1.5";
+                                sign-images = "kernel", "fdt";
+                        };
+                };
+                
+                conf-freescale_dr-linkbox2p-revB.dtb {
+                        description = "0 Linux kernel, FDT blob";
+                        kernel = "kernel-1";
+                        fdt = "fdt-freescale_dr-linkbox2p-revB.dtb";
+                        
+                        
+                        
+                        hash-1 {
+                                algo = "sha256";
+                        };
+                        signature-1 {
+                                algo = "sha256,@ALGO@";
+                                key-name-hint = "@KEY@";
+                                padding = "pkcs-1.5";
+                                sign-images = "kernel", "fdt";
+                        };
+                };
+                
+                conf-freescale_dr-cpum2.dtb {
+                        description = "0 Linux kernel, FDT blob";
+                        kernel = "kernel-1";
+                        fdt = "fdt-freescale_dr-cpum2.dtb";
+                        
+                        
+                        
+                        hash-1 {
+                                algo = "sha256";
+                        };
+                        signature-1 {
+                                algo = "sha256,@ALGO@";
+                                key-name-hint = "@KEY@";
+                                padding = "pkcs-1.5";
+                                sign-images = "kernel", "fdt";
+                        };
+                };
+                
+                conf-freescale_dr-cpum2-revB.dtb {
+                        description = "0 Linux kernel, FDT blob";
+                        kernel = "kernel-1";
+                        fdt = "fdt-freescale_dr-cpum2-revB.dtb";
+                        
+                        
+                        
+                        hash-1 {
+                                algo = "sha256";
+                        };
+                        signature-1 {
+                                algo = "sha256,@ALGO@";
+                                key-name-hint = "@KEY@";
+                                padding = "pkcs-1.5";
+                                sign-images = "kernel", "fdt";
+                        };
+                };
+                
+                conf-freescale_dr-cpum2I-revB.dtb {
+                        description = "0 Linux kernel, FDT blob";
+                        kernel = "kernel-1";
+                        fdt = "fdt-freescale_dr-cpum2I-revB.dtb";
+                        
+                        
+                        
+                        hash-1 {
+                                algo = "sha256";
+                        };
+                        signature-1 {
+                                algo = "sha256,@ALGO@";
+                                key-name-hint = "@KEY@";
+                                padding = "pkcs-1.5";
+                                sign-images = "kernel", "fdt";
+                        };
+                };
+                
+                conf-freescale_dr-simpad2p-revC.dtb {
+                        description = "0 Linux kernel, FDT blob";
+                        kernel = "kernel-1";
+                        fdt = "fdt-freescale_dr-simpad2p-revC.dtb";
+                        
+                        
+                        
+                        hash-1 {
+                                algo = "sha256";
+                        };
+                        signature-1 {
+                                algo = "sha256,@ALGO@";
+                                key-name-hint = "@KEY@";
+                                padding = "pkcs-1.5";
+                                sign-images = "kernel", "fdt";
+                        };
+                };
+                
+                conf-freescale_dr-linkbox2p-revC.dtb {
+                        description = "0 Linux kernel, FDT blob";
+                        kernel = "kernel-1";
+                        fdt = "fdt-freescale_dr-linkbox2p-revC.dtb";
+                        
+                        
+                        
+                        hash-1 {
+                                algo = "sha256";
+                        };
+                        signature-1 {
+                                algo = "sha256,@ALGO@";
+                                key-name-hint = "@KEY@";
+                                padding = "pkcs-1.5";
+                                sign-images = "kernel", "fdt";
+                        };
+                };
+	};
+};
