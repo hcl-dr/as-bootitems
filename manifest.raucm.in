@@ -9,3 +9,6 @@ format=plain
 
 [image.bootloader.as,as-imx93evk]
 filename=barebox-as93evk.img
+
+[image.bootloader.as,as-imx93qsb]
+filename=barebox-as93qsb.img

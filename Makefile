@@ -45,9 +45,11 @@ ifdef OPTEE
 	ATF_ARGS := PLAT=imx93 IMX_BOOT_UART_BASE=0x30890000 SPD=opteed BL32_BASE=0xBE000000
 endif
 
-RAUC_IMAGES := $(RPO)/barebox/stripped/barebox-as93evk.img
+RAUC_IMAGES := $(RPO)/barebox/stripped/barebox-as93evk.img \
+				$(RPO)/barebox/stripped/barebox-as93qsb.img
 
-BB_IMAGES := $(RPO)/barebox/images/barebox-as93evk.img
+BB_IMAGES := $(RPO)/barebox/images/barebox-as93evk.img \
+				 $(RPO)/barebox/images/barebox-as93qsb.img
 
 all: $(RAUC_IMAGES)
 rauc: $(RPO)/$(RAUC_FILE) Makefile
@@ -69,6 +71,7 @@ $(RPO)/barebox/stripped/barebox-as93evk.img: $(RPO)/atf/imx93/release/bl31.bin $
 	make -C ./barebox ARCH=arm O=$(RPO)/barebox $(CC_ARG) -j
 	mkdir -p $(RPO)/barebox/stripped
 	@dd if=$(RPO)/barebox/images/barebox-as93evk.img of=$(RPO)/barebox/stripped/barebox-as93evk.img bs=1024 skip=32
+	@dd if=$(RPO)/barebox/images/barebox-as93qsb.img of=$(RPO)/barebox/stripped/barebox-as93qsb.img bs=1024 skip=32
 
 
 $(BB_FW_DEPS): $(RPO)/firmware-imx/$(FWBIN)
