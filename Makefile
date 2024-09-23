@@ -25,14 +25,19 @@ GITREF = $(shell git describe --tags --long --always --dirty)
 
 FWBIN := firmware-imx-8.24-fbe0a4c
 DDRFW := $(FWBIN)/firmware/ddr/synopsys
-DDRFW_VERSION := 202006
+DDRFW_VERSION := v202201
 
 RAUC_FILE := bootloader-$(GITREF).raucb
 
-BB_FW_DEPS1 := $(RPO)/firmware-imx/$(DDRFW)/lpddr4_pmu_train_1d_dmem_$(DDRFW_VERSION).bin
-BB_FW_DEPS2 := $(RPO)/firmware-imx/$(DDRFW)/lpddr4_pmu_train_1d_imem_$(DDRFW_VERSION).bin
-BB_FW_DEPS3 := $(RPO)/firmware-imx/$(DDRFW)/lpddr4_pmu_train_2d_dmem_$(DDRFW_VERSION).bin
-BB_FW_DEPS4 := $(RPO)/firmware-imx/$(DDRFW)/lpddr4_pmu_train_2d_imem_$(DDRFW_VERSION).bin
+#BB_FW_DEPS1 := $(RPO)/firmware-imx/$(DDRFW)/lpddr4_pmu_train_1d_dmem_$(DDRFW_VERSION).bin
+#BB_FW_DEPS2 := $(RPO)/firmware-imx/$(DDRFW)/lpddr4_pmu_train_1d_imem_$(DDRFW_VERSION).bin
+#BB_FW_DEPS3 := $(RPO)/firmware-imx/$(DDRFW)/lpddr4_pmu_train_2d_dmem_$(DDRFW_VERSION).bin
+#BB_FW_DEPS4 := $(RPO)/firmware-imx/$(DDRFW)/lpddr4_pmu_train_2d_imem_$(DDRFW_VERSION).bin
+
+BB_FW_DEPS1 := $(RPO)/firmware-imx/$(DDRFW)/lpddr4_dmem_1d_$(DDRFW_VERSION).bin
+BB_FW_DEPS2 := $(RPO)/firmware-imx/$(DDRFW)/lpddr4_imem_1d_$(DDRFW_VERSION).bin
+BB_FW_DEPS3 := $(RPO)/firmware-imx/$(DDRFW)/lpddr4_dmem_2d_$(DDRFW_VERSION).bin
+BB_FW_DEPS4 := $(RPO)/firmware-imx/$(DDRFW)/lpddr4_imem_2d_$(DDRFW_VERSION).bin
 
 BB_FW_DEPS := $(BB_FW_DEPS1) $(BB_FW_DEPS2) $(BB_FW_DEPS3) $(BB_FW_DEPS4)
 
