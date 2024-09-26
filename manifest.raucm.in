@@ -1,5 +1,5 @@
 [update]
-compatible=dr-imx8mp
+compatible=as-imx93
 version=@VERSION@
 description=Boot loader
 build=@BUILD@
@@ -7,8 +7,5 @@ build=@BUILD@
 [bundle]
 format=plain
 
-[image.bootloader.as,as-imx93evk]
-filename=barebox-as93evk.img
-
-[image.bootloader.as,as-imx93qsb]
+[image.bootloader.as,as-imx93-qsb]
 filename=barebox-as93qsb.img

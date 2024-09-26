@@ -3,10 +3,10 @@
 O ?= $(PWD)/build
 TOP := $(PWD)
 RPO = $(shell realpath $O)
- 
+
 CONFIG_HABV4_TABLE_BIN ?= $(TOP)/cst/crts/SRK_1_2_3_4_table.bin
-CONFIG_HABV4_IMG_CRT_PEM ?= $(TOP)/cst/crts/IMG1_1_sha256_4096_65537_v3_usr_crt.pem 
-CONFIG_HABV4_CSF_CRT_PEM ?= $(TOP)/cst/crts/CSF1_1_sha256_4096_65537_v3_usr_crt.pem 
+CONFIG_HABV4_IMG_CRT_PEM ?= $(TOP)/cst/crts/IMG1_1_sha256_4096_65537_v3_usr_crt.pem
+CONFIG_HABV4_CSF_CRT_PEM ?= $(TOP)/cst/crts/CSF1_1_sha256_4096_65537_v3_usr_crt.pem
 
 export CONFIG_HABV4_TABLE_BIN
 export CONFIG_HABV4_IMG_CRT_PEM
@@ -19,46 +19,43 @@ $(info BUILDTIME $(BUILDDATE))
 ifneq ($(arch),aarch64)
 	CC_ARG := CROSS_COMPILE=aarch64-linux-gnu-
 	CC_ARG_OPTEE := CROSS_COMPILE64=aarch64-linux-gnu-
+else
+	C_ARG := CROSS_COMPILE=
+	CC_ARG_OPTEE := CROSS_COMPILE64=
 endif
-
+OPTEE_ARGS := PLATFORM=imx-mx93evk
 GITREF = $(shell git describe --tags --long --always --dirty)
 
 FWBIN := firmware-imx-8.24-fbe0a4c
 DDRFW := $(FWBIN)/firmware/ddr/synopsys
 DDRFW_VERSION := v202201
+ELE_FW := firmware-sentinel-0.11
 
 RAUC_FILE := bootloader-$(GITREF).raucb
 
-#BB_FW_DEPS1 := $(RPO)/firmware-imx/$(DDRFW)/lpddr4_pmu_train_1d_dmem_$(DDRFW_VERSION).bin
-#BB_FW_DEPS2 := $(RPO)/firmware-imx/$(DDRFW)/lpddr4_pmu_train_1d_imem_$(DDRFW_VERSION).bin
-#BB_FW_DEPS3 := $(RPO)/firmware-imx/$(DDRFW)/lpddr4_pmu_train_2d_dmem_$(DDRFW_VERSION).bin
-#BB_FW_DEPS4 := $(RPO)/firmware-imx/$(DDRFW)/lpddr4_pmu_train_2d_imem_$(DDRFW_VERSION).bin
+lpddr4_dmem_1d := $(RPO)/firmware-imx/$(DDRFW)/lpddr4_dmem_1d_$(DDRFW_VERSION).bin
+lpddr4_imem_1d := $(RPO)/firmware-imx/$(DDRFW)/lpddr4_imem_1d_$(DDRFW_VERSION).bin
+lpddr4_dmem_2d := $(RPO)/firmware-imx/$(DDRFW)/lpddr4_dmem_2d_$(DDRFW_VERSION).bin
+lpddr4_imem_2d := $(RPO)/firmware-imx/$(DDRFW)/lpddr4_imem_2d_$(DDRFW_VERSION).bin
 
-BB_FW_DEPS1 := $(RPO)/firmware-imx/$(DDRFW)/lpddr4_dmem_1d_$(DDRFW_VERSION).bin
-BB_FW_DEPS2 := $(RPO)/firmware-imx/$(DDRFW)/lpddr4_imem_1d_$(DDRFW_VERSION).bin
-BB_FW_DEPS3 := $(RPO)/firmware-imx/$(DDRFW)/lpddr4_dmem_2d_$(DDRFW_VERSION).bin
-BB_FW_DEPS4 := $(RPO)/firmware-imx/$(DDRFW)/lpddr4_imem_2d_$(DDRFW_VERSION).bin
-
-BB_FW_DEPS := $(BB_FW_DEPS1) $(BB_FW_DEPS2) $(BB_FW_DEPS3) $(BB_FW_DEPS4)
+BB_FW_DEPS := $(lpddr4_dmem_1d) $(lpddr4_dmem_1d) $(lpddr4_dmem_1d) $(lpddr4_imem_2d)
 
 BL31 := imx93-bl31.bin
 ATF_ARGS := PLAT=imx93 IMX_BOOT_UART_BASE=0x30890000 CROSS_COMPILE=$(CROSS_COMPILE)
 BAREBOX_CONFIG ?= as_imx_defconfig
+
 ifdef OPTEE
-	EXTRADEP := barebox/firmware/imx93-bl32.bin
+	OPTEE_DEP := barebox/firmware/imx93-bl32.bin
 	BL31 := imx93-bl31.bin-optee
 	ATF_ARGS := PLAT=imx93 IMX_BOOT_UART_BASE=0x30890000 SPD=opteed BL32_BASE=0xBE000000
 endif
 
-RAUC_IMAGES := $(RPO)/barebox/stripped/barebox-as93evk.img \
-				$(RPO)/barebox/stripped/barebox-as93qsb.img
 
-BB_IMAGES := $(RPO)/barebox/images/barebox-as93evk.img \
-				 $(RPO)/barebox/images/barebox-as93qsb.img
+BB_IMAGES := $(RPO)/barebox/images/barebox-as93qsb.img
+RAUC_IMAGES := $(BB_IMAGES)
 
-all: $(RAUC_IMAGES)
+all: $(BB_IMAGES)
 rauc: $(RPO)/$(RAUC_FILE) Makefile
-
 images: $(RAUC_IMAGES) Makefile
 
 atf:
@@ -66,18 +63,14 @@ atf:
 
 $(RPO)/atf/imx93/release/bl31.bin: atf
 
-$(RPO)/barebox/stripped/barebox-as93evk.img: $(RPO)/atf/imx93/release/bl31.bin $(EXTRADEP) $(BB_FW_DEPS) Makefile
+$(BB_IMAGES): $(RPO)/atf/imx93/release/bl31.bin $(OPTEE_DEP) $(BB_FW_DEPS) Makefile
 	@cp $(RPO)/atf/imx93/release/bl31.bin barebox/firmware/$(BL31)
-	@cp $(BB_FW_DEPS1) barebox/firmware/lpddr4_pmu_train_1d_dmem.bin
-	@cp $(BB_FW_DEPS2) barebox/firmware/lpddr4_pmu_train_1d_imem.bin
-	@cp $(BB_FW_DEPS3) barebox/firmware/lpddr4_pmu_train_2d_dmem.bin
-	@cp $(BB_FW_DEPS4) barebox/firmware/lpddr4_pmu_train_2d_imem.bin
+	@cp $(lpddr4_imem_1d) barebox/firmware/lpddr4_pmu_train_1d_imem.bin
+	@cp $(lpddr4_dmem_1d) barebox/firmware/lpddr4_pmu_train_1d_dmem.bin
+	@cp $(lpddr4_imem_2d) barebox/firmware/lpddr4_pmu_train_2d_imem.bin
+	@cp $(lpddr4_dmem_2d) barebox/firmware/lpddr4_pmu_train_2d_dmem.bin
 	make -C ./barebox ARCH=arm O=$(RPO)/barebox $(CC_ARG) $(BAREBOX_CONFIG)
 	make -C ./barebox ARCH=arm O=$(RPO)/barebox $(CC_ARG) -j
-	mkdir -p $(RPO)/barebox/stripped
-	@dd if=$(RPO)/barebox/images/barebox-as93evk.img of=$(RPO)/barebox/stripped/barebox-as93evk.img bs=1024 skip=32
-	@dd if=$(RPO)/barebox/images/barebox-as93qsb.img of=$(RPO)/barebox/stripped/barebox-as93qsb.img bs=1024 skip=32
-
 
 $(BB_FW_DEPS): $(RPO)/firmware-imx/$(FWBIN)
 
@@ -86,16 +79,23 @@ $(RPO)/firmware-imx/$(FWBIN):
 	@chmod 0755 $(RPO)/firmware-imx/$(FWBIN).bin
 	cd $(RPO)/firmware-imx; ./$(FWBIN).bin --auto-accept --force
 
-$(RPO)/optee/core/tee-raw.bin:
-	make -C imx-optee-os O=$(RPO)/optee CFG_OPTEE_CONFIG="$(TOP)/optee.cfg" $(CC_ARG_OPTEE) -j
+$(RPO)/firmware-imx/$(ELE_FW):
+	@wget -P $(RPO)/firmware-imx https://www.nxp.com/lgfiles/NMG/MAD/YOCTO/$(ELE_FW).bin
+	@chmod 0755 $(RPO)/firmware-imx/$(ELE_FW).bin
+	cd $(RPO)/firmware-imx; ./$(ELE_FW).bin --auto-accept --force
 
-barebox/firmware/imx93-bl32.bin: $(RPO)/optee/core/tee-raw.bin
-	@cp $< $@ 
+
+$(RPO)/optee/core/tee-raw.bin:
+	@echo "Build OPTEE using $(OPTEE_ARGS) $(CC_ARG_OPTEE)"
+	make -C imx-optee-os O=$(RPO)/optee $(OPTEE_ARGS) $(CC_ARG_OPTEE) -j
+
+barebox/firmware/imx93-bl32.bin: $(RPO)/optee/core/tee-raw.bin $(RPO)/firmware-imx/$(ELE_FW)
+	@cp $< $@
 
 $(RPO)/$(RAUC_FILE): manifest.raucm.in $(RAUC_IMAGES)
 	rm -f $@
-	@sed -e 's:@VERSION@:$(GITREF):g' -e 's/@BUILD@/$(BUILDDATE)/g' < manifest.raucm.in > $(RPO)/barebox/stripped/manifest.raucm
-	rauc bundle --cert "$(RAUC_CERT_FILE)" --key "$(RAUC_KEY_FILE)"  $(RPO)/barebox/stripped $@
+	@sed -e 's:@VERSION@:$(GITREF):g' -e 's/@BUILD@/$(BUILDDATE)/g' < manifest.raucm.in > $(RPO)/barebox/images/manifest.raucm
+	rauc bundle --cert "$(RAUC_CERT_FILE)" --key "$(RAUC_KEY_FILE)"  $(RPO)/barebox/images $@
 
 clean:
 	make -C ./barebox clean
