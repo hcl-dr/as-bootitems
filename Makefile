@@ -93,9 +93,11 @@ barebox/firmware/imx93-bl32.bin: $(RPO)/optee/core/tee-raw.bin $(RPO)/firmware-i
 	@cp $< $@
 
 $(RPO)/$(RAUC_FILE): manifest.raucm.in $(RAUC_IMAGES)
-	rm -f $@
-	@sed -e 's:@VERSION@:$(GITREF):g' -e 's/@BUILD@/$(BUILDDATE)/g' < manifest.raucm.in > $(RPO)/barebox/images/manifest.raucm
-	rauc bundle --cert "$(RAUC_CERT_FILE)" --key "$(RAUC_KEY_FILE)"  $(RPO)/barebox/images $@
+	rm -rf $(RPO)/tmp
+	mkdir -p $(RPO)/tmp
+	@sed -e 's:@VERSION@:$(GITREF):g' -e 's/@BUILD@/$(BUILDDATE)/g' < manifest.raucm.in > $(RPO)/tmp/manifest.raucm
+	@cp $(RPO)/barebox/images/barebox-*.img $(RPO)/tmp
+	rauc bundle --cert "$(RAUC_CERT_FILE)" --key "$(RAUC_KEY_FILE)"  $(RPO)/tmp $@
 
 clean:
 	make -C ./barebox clean
